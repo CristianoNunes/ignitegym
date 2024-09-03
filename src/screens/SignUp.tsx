@@ -27,8 +27,14 @@ type FormDataProps = {
 const signUpSchema = yup.object({
   name: yup.string().required("Informe o nome"),
   email: yup.string().required("Informe o e-mail").email("E-mail inválido"),
-  password: yup.string().required("Informe a senha"),
-  password_confirm: yup.string().required("Informe a confirmação da senha"),
+  password: yup
+    .string()
+    .required("Informe a senha")
+    .min(6, "A senha deve ter pelo menos 6 dígitos."),
+  password_confirm: yup
+    .string()
+    .required("Confirme a senha")
+    .oneOf([yup.ref("password"), ""], "A confirmação da senha não confere."),
 });
 
 export function SignUp() {
@@ -112,15 +118,13 @@ export function SignUp() {
             <Controller
               control={control}
               name="password"
-              rules={{
-                required: "Informe a senha.",
-              }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   placeholder="Senha"
                   secureTextEntry
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.password?.message}
                 />
               )}
             />
@@ -128,15 +132,13 @@ export function SignUp() {
             <Controller
               control={control}
               name="password_confirm"
-              rules={{
-                required: "Informe a senha de confirmação.",
-              }}
               render={({ field: { onChange, value } }) => (
                 <Input
                   placeholder="Confirmar a Senha"
                   secureTextEntry
                   onChangeText={onChange}
                   value={value}
+                  errorMessage={errors.password_confirm?.message}
                   onSubmitEditing={handleSubmit(handleSignUp)}
                   returnKeyType="send"
                 />

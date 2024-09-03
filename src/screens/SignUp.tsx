@@ -13,12 +13,26 @@ import BackgroundImg from "@assets/background.png";
 import Logo from "@assets/logo.svg";
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
+import { useState } from "react";
 
 export function SignUp() {
   const navigation = useNavigation();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
 
   function handleGoback() {
     navigation.goBack();
+  }
+
+  function handleSignUp() {
+    console.log({
+      name,
+      email,
+      password,
+      passwordConfirm,
+    });
   }
 
   return (
@@ -48,16 +62,28 @@ export function SignUp() {
           <Center flex={1} gap="$2">
             <Heading color="$gray100">Crie sua conta</Heading>
 
-            <Input placeholder="Nome" />
+            <Input placeholder="Nome" onChangeText={setName} />
 
             <Input
               placeholder="E-mail"
               keyboardType="email-address"
               autoCapitalize="none"
+              onChangeText={setEmail}
             />
-            <Input placeholder="Senha" secureTextEntry />
 
-            <Button title="Criar e acessar" />
+            <Input
+              placeholder="Senha"
+              secureTextEntry
+              onChangeText={setPassword}
+            />
+
+            <Input
+              placeholder="Confirmar a Senha"
+              secureTextEntry
+              onChangeText={setPasswordConfirm}
+            />
+
+            <Button title="Criar e acessar" onPress={handleSignUp} />
           </Center>
 
           <Button

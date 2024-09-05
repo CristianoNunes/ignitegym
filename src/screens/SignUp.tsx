@@ -1,11 +1,7 @@
-import { Alert } from "react-native";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-
-import { api } from "@services/api";
-
 import {
   Center,
   Heading,
@@ -15,13 +11,19 @@ import {
   useToast,
   VStack,
 } from "@gluestack-ui/themed";
+import * as yup from "yup";
+
+import BackgroundImg from "@assets/background.png";
+import Logo from "@assets/logo.svg";
 
 import { Input } from "@components/Input";
 import { Button } from "@components/Button";
 import { ToastMessage } from "@components/ToastMessage";
 
-import BackgroundImg from "@assets/background.png";
-import Logo from "@assets/logo.svg";
+import { useAuth } from "@hooks/useAuth";
+
+import { api } from "@services/api";
+
 import { AppError } from "@utils/AppError";
 
 type FormDataProps = {
@@ -54,6 +56,8 @@ export function SignUp() {
   });
   const navigation = useNavigation();
   const toast = useToast();
+  const { singIn } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleGoback() {
     navigation.goBack();
@@ -61,9 +65,11 @@ export function SignUp() {
 
   async function handleSignUp({ name, email, password }: FormDataProps) {
     try {
-      const response = await api.post("/users", { name, email, password });
-      console.log(response.data);
+      setIsLoading(true);
+      await api.post("/users", { name, email, password });
+      await singIn(email, password);
     } catch (error) {
+      setIsLoading(false);
       const isAppError = error instanceof AppError;
 
       const title = isAppError
@@ -171,6 +177,7 @@ export function SignUp() {
             <Button
               title="Criar e acessar"
               onPress={handleSubmit(handleSignUp)}
+              isLoading={isLoading}
             />
           </Center>
 
